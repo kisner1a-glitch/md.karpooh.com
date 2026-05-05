@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Solar Savings Calculator</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg:#080c10;
+  --card:#0e1318;
+  --card2:#131a22;
+  --border:#1e2a35;
+  --border2:#253040;
+  --sun:#f5a623;
+  --sun2:#ffd166;
+  --green:#22d98a;
+  --green2:#0aff8a;
+  --text:#e8f0f8;
+  --text-dim:#607080;
+  --text-mid:#8fa3b8;
+  --accent:#00c6ff;
+  --radius:20px;
+  --input-bg:#0b1016;
+}
+
+body{
+  background:var(--bg);
+  font-family:'Outfit',sans-serif;
+  color:var(--text);
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:24px;
+  background-image:
+    radial-gradient(ellipse 60% 40% at 70% 10%, rgba(245,166,35,.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 10% 80%, rgba(0,198,255,.05) 0%, transparent 50%);
+}
+
+/* ── wrapper ── */
+.widget{
+  width:100%;
+  animation:fadeUp .6s ease both;
+}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── header ── */
+.header{
+  margin-bottom:28px;
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+}
+.header-left{}
+.tag{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  background:rgba(245,166,35,.1);
+  border:1px solid rgba(245,166,35,.2);
+  color:var(--sun);
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  padding:5px 12px;
+  border-radius:100px;
+  margin-bottom:12px;
+}
+.tag-dot{width:6px;height:6px;border-radius:50%;background:var(--sun);box-shadow:0 0 8px var(--sun);}
+h1{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(22px,4vw,30px);
+  font-weight:800;
+  line-height:1.15;
+  letter-spacing:-.02em;
+}
+h1 span{color:var(--sun);}
+.subtitle{color:var(--text-dim);font-size:14px;margin-top:6px;font-weight:300;}
+
+.sun-icon{
+  flex-shrink:0;
+  width:56px;height:56px;
+  background:rgba(245,166,35,.08);
+  border:1px solid rgba(245,166,35,.15);
+  border-radius:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;
+}
+
+/* ── card ── */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  overflow:hidden;
+}
+
+/* ── input section ── */
+.inputs{
+  padding:28px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+@media(max-width:500px){.inputs{grid-template-columns:1fr}}
+
+.field{display:flex;flex-direction:column;gap:8px;}
+.field.full{grid-column:1/-1;}
+
+label{
+  font-size:12px;
+  font-weight:500;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+}
+.input-wrap{
+  position:relative;
+  display:flex;
+  align-items:center;
+}
+.input-wrap .unit{
+  position:absolute;
+  right:14px;
+  font-size:13px;
+  color:var(--text-dim);
+  pointer-events:none;
+  font-weight:400;
+}
+.input-wrap .unit-left{
+  position:absolute;
+  left:14px;
+  font-size:14px;
+  color:var(--text-mid);
+  pointer-events:none;
+}
+input[type=number], input[type=range]{
+  width:100%;
+  background:var(--input-bg);
+  border:1px solid var(--border);
+  border-radius:10px;
+  color:var(--text);
+  font-family:'Outfit',sans-serif;
+  font-size:15px;
+  font-weight:500;
+  padding:12px 48px 12px 14px;
+  outline:none;
+  transition:border-color .2s, box-shadow .2s;
+  -moz-appearance:textfield;
+}
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button{-webkit-appearance:none}
+input[type=number]:focus{
+  border-color:rgba(245,166,35,.4);
+  box-shadow:0 0 0 3px rgba(245,166,35,.08);
+}
+input.has-left{padding-left:32px;}
+
+/* slider */
+.slider-field{display:flex;flex-direction:column;gap:10px;}
+.slider-label-row{display:flex;justify-content:space-between;align-items:center;}
+.slider-val{
+  font-family:'Syne',sans-serif;
+  font-size:18px;
+  font-weight:700;
+  color:var(--sun);
+}
+input[type=range]{
+  padding:0;
+  border:none;
+  background:none;
+  height:6px;
+  -webkit-appearance:none;
+  cursor:pointer;
+}
+input[type=range]::-webkit-slider-runnable-track{
+  height:4px;
+  border-radius:2px;
+  background:linear-gradient(to right, var(--sun) var(--pct,50%), var(--border2) var(--pct,50%));
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;
+  width:20px;height:20px;
+  border-radius:50%;
+  background:var(--sun);
+  border:3px solid var(--bg);
+  margin-top:-8px;
+  box-shadow:0 0 12px rgba(245,166,35,.5);
+  transition:transform .15s;
+}
+input[type=range]:hover::-webkit-slider-thumb{transform:scale(1.15);}
+
+/* divider */
+.divider{height:1px;background:var(--border);margin:0 28px;}
+
+/* ── calculate btn ── */
+.calc-btn{
+  margin:24px 28px;
+  width:calc(100% - 56px);
+  padding:16px;
+  background:linear-gradient(135deg,#f5a623,#f7c355);
+  border:none;
+  border-radius:12px;
+  color:#0a0800;
+  font-family:'Syne',sans-serif;
+  font-size:16px;
+  font-weight:700;
+  letter-spacing:.02em;
+  cursor:pointer;
+  transition:transform .15s, box-shadow .15s, filter .15s;
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  box-shadow:0 8px 32px rgba(245,166,35,.25);
+}
+.calc-btn:hover{transform:translateY(-2px);box-shadow:0 12px 40px rgba(245,166,35,.35);filter:brightness(1.05);}
+.calc-btn:active{transform:translateY(0);}
+
+/* ── results ── */
+.results{
+  background:var(--card2);
+  border-top:1px solid var(--border);
+  padding:28px;
+  display:none;
+  animation:fadeUp .4s ease both;
+}
+.results.show{display:block;}
+
+.results-title{
+  font-family:'Syne',sans-serif;
+  font-size:13px;
+  font-weight:600;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--text-dim);
+  margin-bottom:20px;
+}
+
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+  margin-bottom:20px;
+}
+@media(max-width:500px){.metrics{grid-template-columns:1fr 1fr}}
+
+.metric{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:16px;
+  position:relative;
+  overflow:hidden;
+}
+.metric::before{
+  content:'';
+  position:absolute;
+  top:0;left:0;right:0;
+  height:2px;
+}
+.metric.m-green::before{background:linear-gradient(90deg,var(--green),var(--green2));}
+.metric.m-sun::before{background:linear-gradient(90deg,var(--sun),var(--sun2));}
+.metric.m-blue::before{background:linear-gradient(90deg,var(--accent),#80e8ff);}
+
+.metric-label{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim);margin-bottom:8px;}
+.metric-value{
+  font-family:'Syne',sans-serif;
+  font-size:clamp(18px,3vw,24px);
+  font-weight:800;
+  line-height:1;
+}
+.metric.m-green .metric-value{color:var(--green2);}
+.metric.m-sun .metric-value{color:var(--sun2);}
+.metric.m-blue .metric-value{color:var(--accent);}
+.metric-sub{font-size:11px;color:var(--text-dim);margin-top:4px;}
+
+/* ── bar chart ── */
+.chart-section{margin-top:20px;}
+.chart-label-row{
+  display:flex;justify-content:space-between;align-items:center;
+  margin-bottom:10px;
+}
+.chart-label{font-size:12px;color:var(--text-dim);letter-spacing:.04em;}
+.bar-group{display:flex;flex-direction:column;gap:8px;}
+
+.bar-row{display:flex;align-items:center;gap:12px;}
+.bar-name{font-size:12px;color:var(--text-mid);width:100px;flex-shrink:0;}
+.bar-track{flex:1;height:8px;background:var(--border);border-radius:4px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:4px;transition:width 1s cubic-bezier(.23,1,.32,1);}
+.bar-fill.before{background:rgba(150,170,190,.3);}
+.bar-fill.after{background:linear-gradient(90deg,var(--sun),var(--green2));}
+.bar-amount{font-size:12px;font-weight:500;color:var(--text);width:70px;text-align:right;flex-shrink:0;}
+
+/* ── payback ── */
+.payback-row{
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(34,217,138,.05);
+  border:1px solid rgba(34,217,138,.15);
+  border-radius:12px;
+  padding:14px 18px;
+  margin-top:16px;
+}
+.payback-text{font-size:13px;color:var(--text-mid);}
+.payback-text strong{color:var(--green2);font-family:'Syne',sans-serif;font-size:16px;}
+
+/* ── disclaimer ── */
+.disclaimer{
+  margin-top:16px;
+  font-size:11px;
+  color:var(--text-dim);
+  line-height:1.6;
+}
+
+/* ── embed note ── */
+.embed-note{
+  margin-top:16px;
+  text-align:center;
+  font-size:11px;
+  color:#2a3a4a;
+  letter-spacing:.04em;
+}
+.embed-note code{color:#3a5060;}
+
+/* ── brand navbar ── */
+.navbar{
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px 20px;
+  margin-bottom:20px;
+  background:rgba(14,19,24,.8);
+  border:1px solid var(--border);
+  border-radius:16px;
+  backdrop-filter:blur(12px);
+  animation:fadeUp .5s ease both;
+}
+.brand-logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+.logo-mark{
+  width:40px;height:40px;
+  border-radius:10px;
+  background:linear-gradient(135deg,#f5a623,#ffd166);
+  display:flex;align-items:center;justify-content:center;
+  font-size:20px;
+  box-shadow:0 4px 16px rgba(245,166,35,.3);
+  flex-shrink:0;
+}
+.brand-text{}
+.brand-name{
+  font-family:'Syne',sans-serif;
+  font-size:18px;
+  font-weight:800;
+  letter-spacing:-.01em;
+  color:var(--text);
+  line-height:1;
+}
+.brand-name span{color:var(--sun);}
+.brand-tagline{
+  font-size:10px;
+  color:var(--text-dim);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  margin-top:2px;
+}
+.navbar-badge{
+  display:flex;
+  align-items:center;
+  gap:6px;
+  background:rgba(245,166,35,.08);
+  border:1px solid rgba(245,166,35,.15);
+  border-radius:100px;
+  padding:6px 12px;
+  font-size:11px;
+  color:var(--sun);
+  font-weight:500;
+  letter-spacing:.05em;
+}
+.navbar-badge-dot{
+  width:5px;height:5px;
+  border-radius:50%;
+  background:var(--sun);
+  box-shadow:0 0 6px var(--sun);
+  animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+</style>
+</head>
+<body>
+
+<div style="width:100%;max-width:680px;display:flex;flex-direction:column;align-items:stretch;">
+<!-- Brand Navbar -->
+<nav class="navbar">
+  <div class="brand-logo">
+    <div class="logo-mark">☀️</div>
+    <div class="brand-text">
+      <div class="brand-name">kar<span>pooh</span></div>
+      <div class="brand-tagline">Solar Solutions</div>
+    </div>
+  </div>
+  <div class="navbar-badge">
+    <span class="navbar-badge-dot"></span>
+    Solar Calculator
+  </div>
+</nav>
+
+<div class="widget">
+
+  <div class="header">
+    <div class="header-left">
+      <div class="tag"><span class="tag-dot"></span>Solar Energy Tool</div>
+      <h1>How Much Will You Save<br>Going <span>Solar?</span></h1>
+      <p class="subtitle">Enter your details below to estimate your monthly & yearly electricity savings.</p>
+    </div>
+    <div class="sun-icon">☀️</div>
+  </div>
+
+  <div class="card">
+    <div class="inputs">
+
+      <!-- Monthly Bill -->
+      <div class="field">
+        <label>Current Monthly Bill</label>
+        <div class="input-wrap">
+          <span class="unit-left">₱</span>
+          <input type="number" id="monthlyBill" class="has-left" value="5000" min="100" max="100000"/>
+        </div>
+      </div>
+
+      <!-- Electricity Rate -->
+      <div class="field">
+        <label>Electricity Rate (per kWh)</label>
+        <div class="input-wrap">
+          <span class="unit-left">₱</span>
+          <input type="number" id="rate" class="has-left" value="11" min="1" max="50" step="0.1"/>
+        </div>
+      </div>
+
+      <!-- Solar System Size -->
+      <div class="field full">
+        <div class="slider-field">
+          <div class="slider-label-row">
+            <label>Solar System Size</label>
+            <div class="slider-val"><span id="sizeVal">5</span> kWp</div>
+          </div>
+          <input type="range" id="systemSize" min="1" max="20" value="5" step="0.5"/>
+          <div style="display:flex;justify-content:space-between;margin-top:2px">
+            <span style="font-size:11px;color:var(--text-dim)">1 kWp</span>
+            <span style="font-size:11px;color:var(--text-dim)">20 kWp</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Peak sun hours -->
+      <div class="field">
+        <label>Peak Sun Hours / Day</label>
+        <div class="input-wrap">
+          <input type="number" id="sunHours" value="5" min="2" max="10" step="0.5"/>
+          <span class="unit">hrs</span>
+        </div>
+      </div>
+
+      <!-- System efficiency -->
+      <div class="field">
+        <label>System Efficiency</label>
+        <div class="input-wrap">
+          <input type="number" id="efficiency" value="80" min="50" max="100"/>
+          <span class="unit">%</span>
+        </div>
+      </div>
+
+      <!-- Installation cost -->
+      <div class="field">
+        <label>Estimated Install Cost</label>
+        <div class="input-wrap">
+          <span class="unit-left">₱</span>
+          <input type="number" id="installCost" class="has-left" value="250000" min="10000"/>
+        </div>
+      </div>
+
+      <!-- Annual rate increase -->
+      <div class="field">
+        <label>Annual Rate Increase</label>
+        <div class="input-wrap">
+          <input type="number" id="rateIncrease" value="5" min="0" max="20" step="0.5"/>
+          <span class="unit">%/yr</span>
+        </div>
+      </div>
+
+    </div><!-- /inputs -->
+
+    <div class="divider"></div>
+
+    <button class="calc-btn" onclick="calculate()">
+      <span>⚡</span> Calculate My Savings
+    </button>
+
+    <!-- Results -->
+    <div class="results" id="results">
+      <div class="results-title">Your Estimated Savings</div>
+
+      <div class="metrics">
+        <div class="metric m-green">
+          <div class="metric-label">Monthly Savings</div>
+          <div class="metric-value" id="rMonthlySave">—</div>
+          <div class="metric-sub" id="rMonthlySaveSub"></div>
+        </div>
+        <div class="metric m-sun">
+          <div class="metric-label">Yearly Savings</div>
+          <div class="metric-value" id="rYearlySave">—</div>
+          <div class="metric-sub" id="rYearlySaveSub"></div>
+        </div>
+        <div class="metric m-blue">
+          <div class="metric-label">Solar Output/mo</div>
+          <div class="metric-value" id="rOutput">—</div>
+          <div class="metric-sub">kWh generated</div>
+        </div>
+      </div>
+
+      <!-- Bar chart -->
+      <div class="chart-section">
+        <div class="chart-label-row">
+          <span class="chart-label">Bill Comparison</span>
+          <span class="chart-label" id="rCoverage"></span>
+        </div>
+        <div class="bar-group">
+          <div class="bar-row">
+            <div class="bar-name">Before Solar</div>
+            <div class="bar-track"><div class="bar-fill before" id="barBefore" style="width:100%"></div></div>
+            <div class="bar-amount" id="lblBefore">—</div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-name">After Solar</div>
+            <div class="bar-track"><div class="bar-fill after" id="barAfter" style="width:0%"></div></div>
+            <div class="bar-amount" id="lblAfter">—</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Payback -->
+      <div class="payback-row">
+        <span class="payback-text">💡 Estimated Payback Period: <strong id="rPayback">—</strong></span>
+        <span class="payback-text">25-yr Lifetime Savings: <strong id="rLifetime" style="color:var(--sun2)">—</strong></span>
+      </div>
+
+      <p class="disclaimer">* Estimates are based on average solar irradiance and may vary based on your roof orientation, shading, panel brand, and local grid conditions. Consult a licensed solar installer for a precise quote.</p>
+    </div>
+
+  </div><!-- /card -->
+
+  <div class="embed-note">Embed: <code>&lt;iframe src="solar-savings-calculator.html" width="700" height="700" style="border:none"&gt;&lt;/iframe&gt;</code></div>
+
+</div><!-- /widget -->
+</div><!-- /outer -->
+
+<script>
+// slider live update
+const sizeSlider = document.getElementById('systemSize');
+const sizeVal    = document.getElementById('sizeVal');
+
+function updateSlider(){
+  const min = +sizeSlider.min, max = +sizeSlider.max, val = +sizeSlider.value;
+  const pct = ((val-min)/(max-min)*100).toFixed(1)+'%';
+  sizeSlider.style.setProperty('--pct', pct);
+  sizeVal.textContent = val;
+}
+sizeSlider.addEventListener('input', updateSlider);
+updateSlider();
+
+function peso(n){
+  return '₱' + Math.round(n).toLocaleString('en-PH');
+}
+
+function calculate(){
+  const monthlyBill  = +document.getElementById('monthlyBill').value  || 5000;
+  const rate         = +document.getElementById('rate').value         || 11;
+  const systemKWp    = +document.getElementById('systemSize').value   || 5;
+  const sunHours     = +document.getElementById('sunHours').value     || 5;
+  const efficiency   = +document.getElementById('efficiency').value   || 80;
+  const installCost  = +document.getElementById('installCost').value  || 250000;
+  const rateIncrease = +document.getElementById('rateIncrease').value / 100 || 0.05;
+
+  // monthly kWh generated
+  const monthlyKWh = systemKWp * sunHours * 30 * (efficiency/100);
+
+  // current monthly kWh consumption
+  const currentKWh = monthlyBill / rate;
+
+  // solar covers up to current consumption
+  const coveredKWh   = Math.min(monthlyKWh, currentKWh);
+  const monthlySaving = coveredKWh * rate;
+  const remainingBill = Math.max(0, monthlyBill - monthlySaving);
+  const coveragePct   = Math.min(100, (coveredKWh / currentKWh * 100)).toFixed(0);
+
+  const yearlySaving  = monthlySaving * 12;
+
+  // payback — accounting for annual rate increase compounding savings
+  let cumSavings = 0, paybackYears = null;
+  let annualSaving = yearlySaving;
+  for(let y=1;y<=30;y++){
+    cumSavings += annualSaving;
+    if(cumSavings >= installCost && !paybackYears) paybackYears = y;
+    annualSaving *= (1 + rateIncrease);
+  }
+
+  // 25 year lifetime savings
+  let lifetime = 0; annualSaving = yearlySaving;
+  for(let y=1;y<=25;y++){
+    lifetime += annualSaving;
+    annualSaving *= (1 + rateIncrease);
+  }
+  lifetime -= installCost; // net
+
+  // populate
+  document.getElementById('rMonthlySave').textContent  = peso(monthlySaving);
+  document.getElementById('rMonthlySaveSub').textContent = `from ${peso(monthlyBill)}/mo bill`;
+  document.getElementById('rYearlySave').textContent    = peso(yearlySaving);
+  document.getElementById('rYearlySaveSub').textContent = `net savings per year`;
+  document.getElementById('rOutput').textContent        = Math.round(monthlyKWh).toLocaleString();
+  document.getElementById('rCoverage').textContent      = `Solar covers ~${coveragePct}% of your usage`;
+  document.getElementById('lblBefore').textContent      = peso(monthlyBill);
+  document.getElementById('lblAfter').textContent       = peso(remainingBill);
+  document.getElementById('barAfter').style.width       = (remainingBill / monthlyBill * 100).toFixed(1) + '%';
+  document.getElementById('rPayback').textContent       = paybackYears ? paybackYears + ' years' : '>30 yrs';
+  document.getElementById('rLifetime').textContent      = peso(lifetime) + ' net';
+
+  const res = document.getElementById('results');
+  res.classList.add('show');
+  res.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+</script>
+</body>
+</html>
